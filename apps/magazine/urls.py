@@ -1,7 +1,7 @@
-from django.urls import path, include
-from .views import ApiEndpointsOverview
+from django.urls import path
+from .views import IssuesListView
 
 
 urlpatterns = [
-    path("", ApiEndpointsOverview.as_view(), name="endpoints_overview"),
+    path("issues/", IssuesListView.as_view(), name="endpoints_overview"),
 ]
