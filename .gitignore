@@ -140,6 +140,9 @@ celerybeat.pid
 # SageMath parsed files
 *.sage.py
 
+Pipfile
+Pipfile.lock
+
 # Environments
 .env
 .venv
@@ -188,4 +191,3 @@ dmypy.json
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,macos,pydev,python
 
 # Custom rules (everything added below won't be overriden by 'Generate .gitignore File' if you use 'Update' option)
-
