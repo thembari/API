@@ -5,7 +5,7 @@
 ## Release History
 
 * 0.0.1
-    * initialized api with django rest framework to creaate endpoints overview
+    * initialized API with djangorestframework to create endpoints overview with all available URLs to be consumed by the frontend
 
 
 ## Quickstart
@@ -24,5 +24,6 @@
 
 
 
-
+## Issues
+* All endpoints are vulnerable due to no authorization or authentication in place yet.
 
