@@ -1,4 +1,6 @@
 from django.urls import path
 from .views import ApiEndpointsOverview
 
-urlpatterns = []
+urlpatterns = [
+    path("", ApiEndpointsOverview.as_view(), name="endpoints_overview"),
+]

@@ -1,12 +1,25 @@
 import os
 from django.db import models
 from django.contrib import admin
+from django.contrib.auth.hashers import make_password, check_password
+import uuid
 
+
+# FUNCTIONS
+# PATH TO UPLOAD PROFILE PHOTOS TO
+# TODO ==> SWITCH TO A CONTENT DELIVERY NETWORK OR PLATFORM
 
 def contributor_photo_path(instance, filename):
     ext = filename.split(".")[-1]
-    filename = "%s_profile-pic.%s" % (instance.Username, ext)
+    filename = "%s_profile-pic.%s" % (instance.username, ext)
     return os.path.join("contributor_profile_pics", filename)
+
+
+def reader_photo_path(instance, filename):
+    basename, file_ext = os.path.splitext(filename)
+    return "media/reader_profile_pics/{instance.user.username}{instance.user.id}_profile_pic"
+
+
 
 
 class Contributor_Profile(models.Model):
@@ -25,34 +38,39 @@ class Contributor_Profile(models.Model):
         (FACEBOOK, "Facebook"),
         (INSTAGRAM, "Instagram"),
         (PINTREST, "Pintrest"),
-        (TUMBLR, "Tmblr"),
+        (TUMBLR, "Tumblr"),
     ]
 
-    Username = models.CharField(max_length=200, null=False, unique=True)
-    First_name = models.CharField(max_length=50, null=False)
-    Last_name = models.CharField(max_length=50, null=False)
-    Date_of_Birth = models.DateField()
-    Email = models.EmailField(unique=True)
-    Phone_number = models.IntegerField()
-    Image = models.FileField(default="default.jpg", upload_to=contributor_photo_path)
-    Password = models.CharField(max_length=200)
-    Social_media_platform = models.CharField(
-        max_length=50, choices=SOCIAL_MEDIA_PLATFORMS, default=FACEBOOK
-    )
-    Social_media_handles = models.CharField(max_length=50, default="@Username")
+    id = uuid.uuid4()
+    username = models.CharField(max_length=200, null=False, unique=True)
+    first_name = models.CharField(max_length=50, null=False)
+    last_name = models.CharField(max_length=50, null=False)
+    date_of_birth = models.DateField()
+
+    # TODO VALIDATE EMAIL
+    email = models.EmailField(unique=True)
+
+    # TODO VALIDATE PHONE NUMBER
+    phone_number = models.CharField(max_length=14)
+    blog_post = models.ForeignKey('blog.BlogPost', max_length=1000, null=True, blank=True, on_delete=models.DO_NOTHING)
+    is_active = models.BooleanField(default=True)
+
+    # TODO VALIDATE IMAGE FORMAT
+    image = models.FileField(default="default.jpg", upload_to=contributor_photo_path)
+
+    # TODO ENCRYPT PASSWORD
+    password = models.CharField(max_length=200)
+    social_media_platform = models.CharField(max_length=50, choices=SOCIAL_MEDIA_PLATFORMS, default=FACEBOOK)
+    social_media_handles = models.CharField(max_length=50)
 
     def __str__(self):
-        return f"{self.Username}"
-
-
-def reader_photo_path(instance, filename):
-    basename, file_ext = os.path.splitext(filename)
-    return "media/reader_profile_pics/{instance.user.Username}{instance.user.id}_profile_pic"
+        return f"{self.username}"
 
 
 class Reader_Profile(models.Model):
     class Meta:
         verbose_name = "Reader Profile"
+        verbose_name_plural = "Reader Profiles"
 
     FACEBOOK = "FB"
     TWITTER = "TW"
@@ -68,17 +86,15 @@ class Reader_Profile(models.Model):
         (TUMBLR, "Tmblr"),
     ]
 
-    # PHONE NUMBER FIELDS CANNOT START WITH A '0'
-    Username = models.CharField(max_length=200, null=False, unique=True)
-    First_name = models.CharField(max_length=50, null=False)
-    Date_of_Birth = models.DateField()
-    Email = models.EmailField(null=False)
-    Image = models.FileField(default="default.jpg", upload_to=reader_photo_path)
-    Password = models.CharField(max_length=200)
-    Social_media_platform = models.CharField(
-        max_length=30, choices=SOCIAL_MEDIA_PLATFORMS, default=FACEBOOK
-    )
-    Social_media_handles = models.CharField(max_length=50, default="@Username")
+    id = uuid.uuid4()
+    username = models.CharField(max_length=200, null=False, unique=True)
+    first_name = models.CharField(max_length=50, null=False)
+    date_of_birth = models.DateField()
+    email = models.EmailField(null=False)
+    image = models.FileField(default="default.jpg", upload_to=reader_photo_path)
+    password = models.CharField(max_length=200)
+    social_media_platform = models.CharField(max_length=30, choices=SOCIAL_MEDIA_PLATFORMS, default=FACEBOOK)
+    social_media_handles = models.CharField(max_length=50, default="@Username")
 
     def __str__(self):
-        return f"{self.Username}"
+        return f"{self.username}"

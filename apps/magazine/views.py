@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework.generics import RetrieveAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework import status
 from rest_framework.response import Response
+from .models import *
 
 
 class IssuesListView(RetrieveAPIView):
@@ -11,5 +12,4 @@ class IssuesListView(RetrieveAPIView):
         resp["message"] = "Success"
         resp["status_code"] = 200
         resp["issues"] = dict()
-
         return Response(resp, status=status.HTTP_200_OK)

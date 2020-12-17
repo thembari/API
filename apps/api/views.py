@@ -10,10 +10,50 @@ class ApiEndpointsOverview(ListAPIView):
         resp = dict()
         resp["message"] = "Success"
         resp["status_code"] = 200
+        resp["Meta"] = "These are all the endpoints available on the mbari API"
         resp["endpoints"] = dict()
-        resp["endpoints"]["get_all_issues"] = "https://127.0.0.1/v1/magazine/issues/"
-        resp["endpoints"][
+        resp["endpoints"]["magazine"] = dict()
+        resp["endpoints"]["magazine"][
+            "get_all_issues"
+        ] = "https://127.0.0.1/v1/magazine/issues/"
+        resp["endpoints"]["magazine"][
+            "create_issue"
+        ] = "https://127.0.0.1/v1/magazine/issues/"
+        resp["endpoints"]["magazine"][
             "get_specific_issue"
-        ] = "https://127.0.0.1/v1//magazine/issues/:id/"
-        resp["endpoints"]["store"] = "https://127.0.0.1/v1/store"
+        ] = "https://127.0.0.1/v1/magazine/issues/:id/"
+        resp["endpoints"]["magazine"][
+            "delete_issue"
+        ] = "https://127.0.0.1/v1/magazine/issues/:id/delete/"
+        resp["endpoints"]["magazine"][
+            "update_issue"
+        ] = "https://127.0.0.1/v1/magazine/issues/:id/update/"
+        resp["endpoints"]["profiles"] = dict()
+        resp["endpoints"]["profiles"][
+            "get_all_users"
+        ] = "https://127.0.0.1/v1/profiles/"
+        resp["endpoints"]["profiles"][
+            "create_a_user"
+        ] = "https://127.0.0.1/v1/profiles/"
+        resp["endpoints"]["profiles"][
+            "get_a_specific_user"
+        ] = "https://127.0.0.1/v1/profiles/:id/"
+        resp["endpoints"]["profiles"][
+            "delete_a_specific_user"
+        ] = "https://127.0.0.1/v1/profiles/:id/delete/"
+        resp["endpoints"]["profiles"][
+            "update_a_specific_user"
+        ] = "https://127.0.0.1/v1/profiles/:id/update/"
+        resp["endpoints"]["blog"] = dict()
+        resp["endpoints"]["blog"]["get_all_posts"] = "https://127.0.0.1/v1/blog/"
+        resp["endpoints"]["blog"]["create_a_post"] = "https://127.0.0.1/v1/blog/"
+        resp["endpoints"]["blog"][
+            "get_a_specific_post"
+        ] = "https://127.0.0.1/v1/blog/:id/"
+        resp["endpoints"]["blog"][
+            "delete_a_specific_post"
+        ] = "https://127.0.0.1/v1/blog/:id/delete/"
+        resp["endpoints"]["blog"][
+            "update_a_specific_post"
+        ] = "https://127.0.0.1/v1/blog/:id/update/"
         return Response(resp, status=status.HTTP_200_OK)

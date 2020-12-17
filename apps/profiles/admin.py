@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import Contributor_Profile, Reader_Profile
 
-# Register your models here.
+models = [Contributor_Profile, Reader_Profile]
+admin.site.register(models)

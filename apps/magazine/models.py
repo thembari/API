@@ -1,8 +1,30 @@
 from django.db import models
+import uuid
+from django.utils.text import slugify
 
-# from django.contrib.auth.models import User
-from apps.profiles.models import Contributor_Profile
-from django.utils.timezone import timezone
+
+
+class Issue(models.Model):
+    id = uuid.uuid4()
+    title = models.CharField(max_length=200, unique=True)
+    image = models.FileField(default="default_post.jpg", upload_to="media")
+    slug = models.SlugField(max_length=200, unique=True, blank=True, default="")
+    published_date = models.DateTimeField(auto_now_add=True)
+
+
+    class Meta:
+        ordering = ["published_date"]
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.title)
+        super(Issue, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.title
+
+
+
+
 
 
 STATUS = (
@@ -11,26 +33,31 @@ STATUS = (
 )
 
 
-class Issue(models.Model):
-    Title = models.CharField(max_length=200, unique=True)
-    Content = models.TextField()
-    Category = models.CharField(max_length=200)
-    Author = models.ForeignKey(Contributor_Profile, on_delete=models.CASCADE)
-    Image = models.FileField(default="default_post.jpg", upload_to="media")
-    Slug = models.SlugField(max_length=200, unique=True, blank=True, default="")
-    Created_on = models.DateTimeField(auto_now_add=True)
-    Status = models.IntegerField(choices=STATUS, default=0)
+
+
+class Content(models.Model):
+    id = uuid.uuid4()
+    issue = models.ForeignKey(Issue, on_delete=models.DO_NOTHING)
+    title = models.CharField(max_length=200, unique=True)
+    content = models.TextField()
+    category = models.ManyToManyField('blog.Category')
+    contributors = models.ManyToManyField('profiles.Contributor_Profile')
+    image = models.FileField(default="default_post.jpg", upload_to="media")
+    slug = models.SlugField(max_length=200, unique=True, blank=True, default="")
+    created_on = models.DateTimeField(auto_now_add=True)
+    status = models.IntegerField(choices=STATUS, default=0)
+    is_featured = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ["-Created_on"]
+        ordering = ["created_on"]
+        verbose_name = 'Issue Content'
+        verbose_name_plural = 'Issue Contents'
+
 
     def __str__(self):
-        return self.title + " By: " + self.Author
+        return self.title
 
 
-class Issue_content(models.Model):
-    Title = models.CharField(max_length=200, unique=True)
-    Content = models.TextField()
-    Author = models.ForeignKey(
-        Contributor_Profile, on_delete=models.CASCADE, related_name="blog_posts"
-    )
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.title)
+        super(Content, self).save(*args, **kwargs)
