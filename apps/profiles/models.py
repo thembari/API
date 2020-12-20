@@ -12,12 +12,12 @@ import uuid
 def contributor_photo_path(instance, filename):
     ext = filename.split(".")[-1]
     filename = "%s_profile-pic.%s" % (instance.username, ext)
-    return os.path.join("contributor_profile_pics", filename)
+    return os.path.join("profile_pics/contributors/", filename)
 
 
 def reader_photo_path(instance, filename):
     basename, file_ext = os.path.splitext(filename)
-    return "media/reader_profile_pics/{instance.user.username}{instance.user.id}_profile_pic"
+    return "profile_pics/readers/{instance.user.username}_profile_pic"
 
 
 
@@ -41,11 +41,17 @@ class Contributor_Profile(models.Model):
         (TUMBLR, "Tumblr"),
     ]
 
-    id = uuid.uuid4()
+    GENDER_CHOICES = [
+        ('MALE', "Male"),
+        ('FEMALE', "Female"),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     username = models.CharField(max_length=200, null=False, unique=True)
     first_name = models.CharField(max_length=50, null=False)
     last_name = models.CharField(max_length=50, null=False)
     date_of_birth = models.DateField()
+    gender = models.CharField(max_length=20, choices=GENDER_CHOICES, default='')
 
     # TODO VALIDATE EMAIL
     email = models.EmailField(unique=True)
@@ -53,10 +59,11 @@ class Contributor_Profile(models.Model):
     # TODO VALIDATE PHONE NUMBER
     phone_number = models.CharField(max_length=14)
     blog_post = models.ForeignKey('blog.BlogPost', max_length=1000, null=True, blank=True, on_delete=models.DO_NOTHING)
+    likes = models.ManyToManyField('blog.BlogPost', related_name="likes", blank=True)
     is_active = models.BooleanField(default=True)
 
     # TODO VALIDATE IMAGE FORMAT
-    image = models.FileField(default="default.jpg", upload_to=contributor_photo_path)
+    image = models.FileField(default="default.jpeg", upload_to=contributor_photo_path)
 
     # TODO ENCRYPT PASSWORD
     password = models.CharField(max_length=200)
@@ -86,15 +93,31 @@ class Reader_Profile(models.Model):
         (TUMBLR, "Tmblr"),
     ]
 
-    id = uuid.uuid4()
+
+    GENDER_CHOICES = [
+        ('MALE', "Male"),
+        ('FEMALE', "Female"),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     username = models.CharField(max_length=200, null=False, unique=True)
     first_name = models.CharField(max_length=50, null=False)
+    gender = models.CharField(max_length=20, choices=GENDER_CHOICES, default='')
     date_of_birth = models.DateField()
+
+    # TODO VALIDATE EMAIL
     email = models.EmailField(null=False)
-    image = models.FileField(default="default.jpg", upload_to=reader_photo_path)
+
+    # TODO VALIDATE IMAGE FORMAT
+    image = models.FileField(default="default.jpeg", upload_to=reader_photo_path)
+    likes = models.ManyToManyField('blog.BlogPost', related_name="liked_by", blank=True)
+
+    # TODO ENCRYPT PASSWORD
     password = models.CharField(max_length=200)
     social_media_platform = models.CharField(max_length=30, choices=SOCIAL_MEDIA_PLATFORMS, default=FACEBOOK)
     social_media_handles = models.CharField(max_length=50, default="@Username")
+    is_active = models.BooleanField(default=True)
+
 
     def __str__(self):
         return f"{self.username}"

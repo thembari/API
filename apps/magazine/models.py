@@ -1,11 +1,10 @@
 from django.db import models
-import uuid
 from django.utils.text import slugify
-
+import uuid
 
 
 class Issue(models.Model):
-    id = uuid.uuid4()
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=200, unique=True)
     image = models.FileField(default="default_post.jpg", upload_to="media")
     slug = models.SlugField(max_length=200, unique=True, blank=True, default="")
@@ -23,20 +22,13 @@ class Issue(models.Model):
         return self.title
 
 
-
-
-
-
 STATUS = (
     (0, "Draft"),
     (1, "Submit"),
 )
 
-
-
-
 class Content(models.Model):
-    id = uuid.uuid4()
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     issue = models.ForeignKey(Issue, on_delete=models.DO_NOTHING)
     title = models.CharField(max_length=200, unique=True)
     content = models.TextField()
