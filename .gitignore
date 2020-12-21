@@ -207,3 +207,6 @@ dmypy.json
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,macos,pydev,python
 
 # Custom rules (everything added below won't be overriden by 'Generate .gitignore File' if you use 'Update' option)
+profile_pics/readers/instance.user.username_profile_pic
+Pipfile
+Pipfile.lock
