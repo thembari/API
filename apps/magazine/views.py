@@ -14,7 +14,7 @@ class IssuesListCreateView(generics.ListCreateAPIView):
 
     # DISPLAYS ALL MAGAZINE ISSUES
     def get(self, request, *args, **kwargs):
-        
+
         serializer = IssueModelSerializer
         issues = Issue.objects.all()
         serializer = serializer(issues, many=True)
@@ -26,7 +26,7 @@ class IssuesListCreateView(generics.ListCreateAPIView):
             resp["issues"][issue.get('title').title()] = issue
             # resp["issues"][issue.get('title').title()]['content'] = issue_content
         return Response(resp, status=status.HTTP_200_OK)
-    
+
 
     # CREATE NEW MAGAZINE ISSUE
     def post(self, request, *args, **kwargs):
@@ -36,7 +36,7 @@ class IssuesListCreateView(generics.ListCreateAPIView):
             serializer.save()
             resp = dict()
             resp["message"] = "Success"
-            resp["status_code"] = 201 
+            resp["status_code"] = 201
 
             return Response(resp, status=status.HTTP_201_CREATED)
         return Response(serializer.errors)
@@ -50,25 +50,30 @@ class IssueDetailUpdateView(generics.RetrieveUpdateAPIView):
     def get(self, request, *args, **kwargs):
         issue = Issue.objects.get(id=self.kwargs['id'])
         contents = Content.objects.filter(issue=self.kwargs['id'])
-        serializer = IssueModelSerializer
-        serializer = serializer(issue)
+        serializer = ContentModelSerializer(contents, many=True)
+
+        serializer1 = IssueModelSerializer
+        serializer1 = serializer1(issue)
         resp = dict()
         resp["message"] = "Success"
         resp["status_code"] = 200
-        resp[str(issue).title()] = serializer.data
+        resp[str(issue).title()] = serializer1.data
         resp['contents'] = list()
-        # print(contents)
+
         for item in contents.iterator():
+            all_contributors = item.contributors.all()
+            all_categories = item.category.all()
+            # print(type(item.image))
             content_obj = dict(
                 title = item.title,
                 content = item.content,
+                image = item.image.url,
+                contributors = [str(contributor) for contributor in all_contributors],
+                categories = [str(category) for category in all_categories],
+
             )
+
             resp['contents'].append(content_obj)
-            # resp['contents']['title'] = item.title
-
-            
-
-            
         return Response(resp, status=status.HTTP_200_OK)
 
     def put(self, request, *args, **kwargs):
@@ -91,7 +96,7 @@ class IssueDestroyView(generics.DestroyAPIView):
 
     def delete(self, request, *args, **kwargs):
         issue = get_object_or_404(Issue, id=self.kwargs['id'])
- 
+
 
         issue.delete()
         resp = dict()

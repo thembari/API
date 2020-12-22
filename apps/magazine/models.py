@@ -53,3 +53,14 @@ class Content(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
         super(Content, self).save(*args, **kwargs)
+
+
+def get_image_filename(instance, filename):
+    id = instance.content.title
+    return "issue_photos/%s" % (title)
+
+
+class ContentImages(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    content = models.ForeignKey(Content, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to=get_image_filename)
