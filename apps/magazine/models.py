@@ -62,5 +62,6 @@ def get_image_filename(instance, filename):
 
 class ContentImages(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    # TODO MIGHT HAVE TO MAKE THIS A MANY-TO-MANY FIELD 
     content = models.ForeignKey(Content, on_delete=models.CASCADE)
     image = models.ImageField(upload_to=get_image_filename)

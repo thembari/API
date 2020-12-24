@@ -63,7 +63,6 @@ class IssueDetailUpdateView(generics.RetrieveUpdateAPIView):
         for item in contents.iterator():
             all_contributors = item.contributors.all()
             all_categories = item.category.all()
-            # print(type(item.image))
             content_obj = dict(
                 title = item.title,
                 content = item.content,
